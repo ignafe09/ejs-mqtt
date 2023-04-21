@@ -52,7 +52,6 @@ def main(hostname):
 
 
 if __name__ == '__main__':
-    hostname = 'simba.fdi.ucm.es'
     if len(sys.argv)<2:
         print(f"Usage: {sys.argv[0]} broker")
     hostname = sys.argv[1]
