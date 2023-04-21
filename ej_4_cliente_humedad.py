@@ -11,7 +11,7 @@ listening_humidity = False
 #Recibe un mensaje de temperatura1 o temperatura2, si es mayor que un cierto valor K0,
 # escucha los mensajes de humidity, si no, deja de escuchar si estaba escuchando.
 #una vez recibe de humidity, si es mayor de K1 deja de escuchar y si no no sigue escuchando.
-def on_message(mqttc, userdata, msg):
+def on_message(client, userdata, msg):
     global listening_humidity
     print(msg.topic, msg.payload)
     dato = float(msg.payload)
@@ -51,9 +51,8 @@ def main(hostname):
 
 
 if __name__ == '__main__':
-    hostname = 'simba.fdi.ucm.es'
     if len(sys.argv)<2:
-        print(f"Usage: {sys.argv[0]} broker")
+        print(f"Usage: {sys.argv[0]} hostname")
     hostname = sys.argv[1]
     main(hostname)
 
