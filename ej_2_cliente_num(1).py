@@ -8,13 +8,16 @@ def on_connect(client, userdata, rc):
     print("Conectado con código de resultado: " + str(rc))
     client.subscribe("numbers")
 
-def on_message(client, userdata, msg):
-    data = msg.payload.decode()
+#Recibe un mensaje, le suma 1 a su posicion en lista frecuencias, si es entero 
+#lo anade a enteros, si no a comaflotante, y devuelve por pantalla si es primo o no
+
+def on_message(client, userdata, msg):    
+    data = msg.payload.decode()           
         
     try:
         num = int(data)
         num_str = str(num)
-        if num_str in userdata['frecuencias']:
+        if num_str in userdata['frecuencias']:      
             userdata['frecuencias'][num_str] += 1
         else:
             userdata['frecuencias'][num_str] = 1
