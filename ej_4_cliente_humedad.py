@@ -9,6 +9,9 @@ listening_humidity = False
 def on_connect(mqttc, userdata, flags, rc):
     print("CONNECT:", userdata, flags, rc)
 
+#Recibe un mensaje de temperatura1 o temperatura2, si es mayor que un cierto valor K0,
+# escucha los mensajes de humidity, si no, deja de escuchar si estaba escuchando.
+#una vez recibe de humidity, si es mayor de K1 escucha y si no no sigue escuchando.
 def on_message(mqttc, userdata, msg):
     global listening_humidity
     print("MESSAGE:", userdata, msg.topic, msg.qos, msg.payload, msg.retain)
