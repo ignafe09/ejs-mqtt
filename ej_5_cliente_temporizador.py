@@ -7,6 +7,8 @@ def on_connect(client, rc):
     print("Conectado con código de resultado: " + str(rc))
     client.subscribe('temporizador')
 
+#se recibe un mensaje con un tiempo de espera, se hace un sleep del tiempo que se indica,
+# y se publica cuando ha terminado
 def on_message(client, userdata, msg):
     payload_str = msg.payload.decode('utf-8')
     topic, espera, mensaje = payload_str.split(';')
