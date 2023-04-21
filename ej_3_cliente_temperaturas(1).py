@@ -5,6 +5,7 @@ import sys
 t1_temperatures = [] #Variables globales para realizar los calculos solicitados
 t2_temperatures = []
 
+#calcula maximo, minimo, medias, devuelve por pantalla y vacia las listas
 def calculate_statistics():
     t1_max = max(t1_temperatures)
     t1_min = min(t1_temperatures)
@@ -23,6 +24,7 @@ def on_connect(client, rc):
     client.subscribe('temperature/t1')
     client.subscribe('temperature/t2')
 
+#recibe mensaje, y dependiendo de donde venga, lo anade a una lista u otra
 def on_message(client, userdata, msg):
     data = msg.payload.decode()
     topic = msg.topic
@@ -31,7 +33,7 @@ def on_message(client, userdata, msg):
     elif topic == 'temperature/t2':
         t2_temperatures.append(float(data))
 
-# función principal
+# función principal, cada 5 segundos va calculando las estadisticas y las devuelve por pantalla
 def main(hostname):
     client = Client()
     client.on_connect = on_connect
