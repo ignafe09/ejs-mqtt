@@ -6,66 +6,45 @@ K0 = 25
 K1 = 60
 listening_humidity = False
 
-def on_connect(mqttc, userdata, flags, rc):
-    print("CONNECT:", userdata, flags, rc)
+
 
 #Recibe un mensaje de temperatura1 o temperatura2, si es mayor que un cierto valor K0,
 # escucha los mensajes de humidity, si no, deja de escuchar si estaba escuchando.
-#una vez recibe de humidity, si es mayor de K1 escucha y si no no sigue escuchando.
+#una vez recibe de humidity, si es mayor de K1 deja de escuchar y si no no sigue escuchando.
 def on_message(mqttc, userdata, msg):
     global listening_humidity
-    print("MESSAGE:", userdata, msg.topic, msg.qos, msg.payload, msg.retain)
-    
+    print(msg.topic, msg.payload)
+    dato = float(msg.payload)
     if msg.topic == 'temperature/t1' or msg.topic == 'temperature/t2':
-        temperature = int(msg.payload.decode())
         
-        if temperature > K0 and not listening_humidity:
+        if dato > K0 and not listening_humidity:
             print("Listening to humidity")
-            mqttc.subscribe('humidity')
+            client.subscribe('humidity')
             listening_humidity = True
-        elif (temperature <= K0 or listening_humidity) and listening_humidity:
+        elif dato <= K0  and listening_humidity:
             print("Not listening to humidity")
-            mqttc.unsubscribe('humidity')
+            client.unsubscribe('humidity')
             listening_humidity = False
         
-    elif msg.topic == 'humidity':
-        humidity = int(msg.payload.decode())
-        
-        if humidity > K1 and not listening_humidity:
+    elif msg.topic == 'humidity'
+        if dato > K1 and not listening_humidity:
             print("Listening to humidity")
-            mqttc.subscribe('humidity')
-            listening_humidity = True
-        elif humidity <= K1 and listening_humidity:
-            print("Not listening to humidity")
-            mqttc.unsubscribe('humidity')
+            client.unsubscribe('humidity')
             listening_humidity = False
-
-def on_publish(mqttc, userdata, mid):
-    print("PUBLISH:", userdata, mid)
-
-def on_subscribe(mqttc, userdata, mid, granted_qos):
-    print("SUBSCRIBED:", userdata, mid, granted_qos)
-
-def on_log(mqttc, userdata, level, string):
-    print("LOG", userdata, level, string)
 
 
 def main(hostname):
-    mqttc = Client(userdata="data (of any type) for user")
-    mqttc.enable_logger()
+    client = Client()
+    
 
-    mqttc.on_message = on_message
-    mqttc.on_connect = on_connect
-    mqttc.on_publish = on_publish
-    mqttc.on_subscribe = on_subscribe
-    mqttc.on_log = on_log
+    client.on_message = on_message
 
-    mqttc.connect(hostname)
+    client.connect(hostname)
 
-    mqttc.subscribe('temperature/t1')
-    mqttc.subscribe('temperature/t2')
+    client.subscribe('temperature/t1')
+    client.subscribe('temperature/t2')
 
-    mqttc.loop_start()
+    client.loop_start()
     
     while True:
         sleep(1)
@@ -73,7 +52,8 @@ def main(hostname):
 
 if __name__ == '__main__':
     hostname = 'simba.fdi.ucm.es'
-    if len(sys.argv)>1:
-        hostname = sys.argv[1]
+    if len(sys.argv)<2:
+        print(f"Usage: {sys.argv[0]} broker")
+    hostname = sys.argv[1]
     main(hostname)
 
