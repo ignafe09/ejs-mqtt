@@ -10,8 +10,8 @@ def on_connect(client, rc):
 #se recibe un mensaje con un tiempo de espera, se hace un sleep del tiempo que se indica,
 # y se publica cuando ha terminado
 def on_message(client, userdata, msg):
-    payload_str = msg.payload.decode('utf-8')
-    topic, espera, mensaje = payload_str.split(';')
+    dato = msg.payload
+    topic, espera, mensaje = dato.split(';')
     t_espera = int(espera)
     sleep(t_espera)
     client.publish(topic,  mensaje)
@@ -21,7 +21,6 @@ def main(hostname):
     client = Client()
     client.on_connect = on_connect
     client.on_message = on_message
-    client.username_pw_set('cliente_temporizador', password=None)
     client.connect(hostname)
     client.loop_start()
 
@@ -30,7 +29,8 @@ def main(hostname):
 
 
 if __name__ == '__main__':
-    hostname = 'simba.fdi.ucm.es'
     if len(sys.argv)>1:
-        hostname = sys.argv[1]
+        print(f"Usage: {sys.argv[0]}")
+    hostname = sys.argv[1]
+    main(hostname)
 
