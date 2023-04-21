@@ -25,12 +25,12 @@ def calculate_mean(values):
 
 def on_connect(client, rc):
     print("Conectado con código de resultado: " + str(rc))
-    client.subscribe("numbers")
+    client.subscribe('numbers')
     
 # Función que se ejecutará cuando se reciba un mensaje en el topic "numbers"
 # Lee el numero, si es primo, se pone a escuchar humedad 5 seg.
 def on_message_numbers(client, userdata, message):
-    number = int(message.payload.decode())
+    number = int(message.payload)
     print(f"Número recibido: {number}")
     if es_primo(number):
         print("Número primo, leyendo humedad durante 5 segundos...")
@@ -45,7 +45,7 @@ def on_message_numbers(client, userdata, message):
 #y vacia la lista. Si la media supera cierto valor, se pone un temporizador.
 
 def on_message_humidity(client, userdata, message):
-    humidity = float(message.payload.decode())
+    humidity = float(message.payload)
     print(f"Received humidity: {humidity}")
     values.append(humidity)
     if len(values) >= 5:
@@ -64,7 +64,6 @@ def main(hostname):
     client.on_connect = on_connect
     client.on_message = on_message_numbers
     client.message_callback_add("humidity", on_message_humidity)
-    client.username_pw_set('cadena_client', password=None)
     client.connect(hostname)
     client.loop_start()
     
@@ -72,7 +71,6 @@ def main(hostname):
         sleep(1)
 
 if __name__ == '__main__':
-    hostname = 'simba.fdi.ucm.es'
     if len(sys.argv)>1:
         hostname = sys.argv[1]
     main(hostname)
