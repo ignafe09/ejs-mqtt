@@ -27,9 +27,9 @@ def on_message(client, userdata, msg):
         data = msg.payload
         topic=msg.topic
         if topic == 'temperature/t1':
-            userdata["t1"].append(float(data))
+            userdata["t1_temperatures"].append(float(data))
         elif topic == 'temperature/t2':
-            userdata["t1"].append(float(data))
+            userdata["t2_temperatures"].append(float(data))
     except ValueError:
         pass
     except Exception as e:
@@ -37,11 +37,10 @@ def on_message(client, userdata, msg):
 
 # función principal, cada 5 segundos va calculando las estadisticas y las devuelve por pantalla
 def main(hostname):
-    userdata = {'t1':[],'t2':[]}
+    userdata = {'t1_temperatures':[],'t2_temperatures':[]}
     client = Client(userdata=userdata)
     client.on_connect = on_connect
     client.on_message = on_message
-    client.username_pw_set('temperature_client', password=None)
     client.connect(hostname)
     client.loop_start()
 
